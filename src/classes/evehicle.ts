@@ -1,4 +1,4 @@
-import vehicleObj = require('./vehicleObj');
+import vehicleObj from './vehicleObj.js';
  class Evehicle extends vehicleObj{
     protected currentCharge: number;
     public constructor(protected readonly type: string, protected readonly name: string, protected readonly costPerMinute: number, protected readonly usage: number){
@@ -42,4 +42,4 @@ import vehicleObj = require('./vehicleObj');
     }
  }
 
-export = Evehicle;
+export default Evehicle;

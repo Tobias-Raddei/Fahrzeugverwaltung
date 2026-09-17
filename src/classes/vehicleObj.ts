@@ -1,4 +1,4 @@
-import type { Vehicle } from '../interfaces/vehicle';
+import type { Vehicle } from '../interfaces/vehicle.ts';
 class VehicleObj implements Vehicle {
     protected isRented: boolean;
 
@@ -21,7 +21,7 @@ class VehicleObj implements Vehicle {
         }
     }
 
-    public return(): void{
+    public returnVehicle(): void{
         try{
             if(this.isRented) this.isRented = false;
             else throw new Error("Can not return a vehicle that is not rented out!")
@@ -40,4 +40,4 @@ class VehicleObj implements Vehicle {
     }
 }
 
-export = VehicleObj;
+export default VehicleObj;
