@@ -56,7 +56,7 @@ async function doSmth(data: VehicleObj[]){
         const state = await reader.question("");
         switch(state){
             case "1":
-                //rentOut(data, reader);
+                await rentOut(data, reader);
                 break;
             case "2":
                 break;
@@ -92,9 +92,24 @@ async function printAllVehicles(data: VehicleObj[], reader: readline.Interface){
     await reader.question(":");
 }
 
-/*async function rentOut(data: VehicleObj[], reader: readline.Interface){
+async function rentOut(data: VehicleObj[], reader: readline.Interface){
     console.log("Which vehicle would you like to rent out?");
-    for(let i = 0; i < )
-}*/
+    try{
+        console.log("Enter vehicle number");
+        const vNumberString: string = await reader.question(":");
+        const vNumber: number = Number(vNumberString);
+        if(isNaN(vNumber)) throw new Error("Not a valid number!");
+        if(vNumber > data.length - 1) throw new Error("Vehicle number must be within the limits of fleet length!");
+        if(vNumber < 0) throw new Error("Vehicle number must be a positive number!");
+        if(!Number.isInteger(vNumber))throw new Error("Vehicle number must be a whole number!");
+        console.log("Enter renting duration");
+        const rentDurationString = await reader.question(":");
+        const rentDuration: number = Number(rentDurationString);
+        if(isNaN(rentDuration)) throw new Error("Not a valid number!");
+        data[vNumber]?.rent(rentDuration);
+    }catch(err){
+        console.log(`Error renting out vehicle: ${err}`);
+    }
+}
 
 initialize();
