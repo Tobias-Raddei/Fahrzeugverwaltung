@@ -3,6 +3,7 @@ import { stdin as input, stdout as output } from 'node:process';
 import VehicleObj from './classes/vehicleObj.js';
 import Evehicle from './classes/evehicle.js';
 import TestData from './testData.js';
+import { read } from 'node:fs';
 function initialize(){
     /*const myBicycle = new VehicleObj("Bicycle","myBike", 0.05);
     const myEbike = new Evehicle("Ebike", "myEbike", 0.1, 2);
@@ -24,11 +25,22 @@ function initialize(){
 
     myBicycle.return();
     myEbike.return();*/
-    var data = new TestData;
+    const testData = new TestData;
+    var data: VehicleObj[] = [];
+    testData.getBikes().forEach(element => {
+        data.push(element);
+    });
+    testData.getEbikes().forEach(element => {
+        data.push(element);
+    });
+    testData.getScooters().forEach(element => {
+        data.push(element);
+    });
+    
     doSmth(data);
 }
 
-async function doSmth(data: TestData){
+async function doSmth(data: VehicleObj[]){
     var close: string = "";
     var state: number;
     const reader = readline.createInterface({input, output});
@@ -44,12 +56,14 @@ async function doSmth(data: TestData){
         const state = await reader.question("");
         switch(state){
             case "1":
+                //rentOut(data, reader);
                 break;
             case "2":
                 break;
             case "3":
                 break;
             case "4":
+                await printAllVehicles(data, reader);
                 break;
             case "5":
                 break;
@@ -58,8 +72,29 @@ async function doSmth(data: TestData){
         }
         console.log("Would you like to continue? If you choose no, the application closes.");
         console.log("[y/n]:");
-    }while(close.toLowerCase() != 'y');
+        close = (await reader.question(":")).trim();
+    }while(close.toLowerCase() != 'n');
     reader.close();
 }
+
+async function printAllVehicles(data: VehicleObj[], reader: readline.Interface){
+    console.log(
+        "Number".padEnd(8)+
+        "Type".padEnd(16)+
+        "Name".padEnd(24)+
+        "is available".padEnd(16)+
+        "currentCharge");
+    for(let i = 0; i < data.length; i++){
+        process.stdout.write(String(i) + "\t");
+        data[i]?.printStatus();
+    }
+    console.log("Press enter to continue.");
+    await reader.question(":");
+}
+
+/*async function rentOut(data: VehicleObj[], reader: readline.Interface){
+    console.log("Which vehicle would you like to rent out?");
+    for(let i = 0; i < )
+}*/
 
 initialize();

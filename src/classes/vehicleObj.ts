@@ -32,11 +32,22 @@ class VehicleObj implements Vehicle {
     }
 
     public printStatus(): void{
-        console.log("TODO: insert propper status message!");
+        var rentedSymbol: string;
+        if(this.isRented) rentedSymbol = 'x';
+        else rentedSymbol = 'o';
+        console.log(
+            `${this.type.padEnd(16)}`+
+            `${this.name.padEnd(30)}`+
+            `${rentedSymbol.padEnd(10)}`
+        );
     }
 
     public getName(): string{
         return this.name;
+    }
+
+    public getStatus(): boolean{
+        return this.isRented;
     }
 }
 

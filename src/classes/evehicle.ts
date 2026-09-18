@@ -7,7 +7,6 @@ import vehicleObj from './vehicleObj.js';
     }
 
     public override drive(distance: number): void {
-        
         try{
             if(this.isRented){
                 let usedEnergy = this.usage * distance;
@@ -35,6 +34,18 @@ import vehicleObj from './vehicleObj.js';
         }catch(err){
             console.log(`An error occured while charging ${this.name}: ${err}`);
         }
+    }
+
+    public override printStatus(): void {
+        var rentedSymbol: string;
+        if(this.isRented && this.currentCharge < 50) rentedSymbol = 'x';
+        else rentedSymbol = 'o';
+        console.log(
+            `${this.type.padEnd(16)}`+
+            `${this.name.padEnd(30)}`+
+            `${rentedSymbol.padEnd(10)}`+
+            `${String(this.currentCharge)}`
+        );
     }
 
     public getCurrentCharge(): number{
