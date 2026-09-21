@@ -93,9 +93,9 @@ async function rentOut(data: VehicleObj[], reader: readline.Interface){
     console.log("Which vehicle would you like to rent out?");
     try{
         console.log("Enter vehicle number");
-        const vNumberString: string = await reader.question(":");
-        const vNumber: number = Number(vNumberString);
-        if(isNaN(vNumber)) throw new Error("Not a valid number!");
+        const vNumberS: string = await reader.question(":");
+        const vNumber: number = Number(vNumberS);
+        if(Number.isNaN(vNumber)) throw new Error("Vehicle numebr must be a number!");
         if(vNumber > data.length - 1) throw new Error("Vehicle number must be within the limits of fleet length!");
         if(vNumber < 0) throw new Error("Vehicle number must be a positive number!");
         if(!Number.isInteger(vNumber))throw new Error("Vehicle number must be a whole number!");
@@ -114,10 +114,10 @@ async function addVehicle(testData: TestData, reader: readline.Interface): Promi
     console.log("Adding a new vehicle to the fleet:");
     let vType: string = "";
     let vName: string = "";
-    let vCostPerMinute: string = "";
-    let vCostPerMinuteN: number = 0;
-    let evUsage: string = "";
-    let evUsageN: number = 0;
+    let vCostPerMinuteS: string = "";
+    let vCostPerMinute: number = 0;
+    let evUsageS: string = "";
+    let evUsage: number = 0;
     
     try{
         //Vehicle Type
@@ -132,18 +132,18 @@ async function addVehicle(testData: TestData, reader: readline.Interface): Promi
         
         //Vehicle's cost per minnute
         console.log("Enter the vehicle's cost per minute");
-        vCostPerMinute = await reader.question(":");
+        vCostPerMinuteS = await reader.question(":");
+        vCostPerMinute = Number(vCostPerMinuteS);
         if(Number.isNaN(vCostPerMinute)) throw new Error("The entered cost is not a number!");
-        vCostPerMinuteN = Number(vCostPerMinute);
-        if(vCostPerMinuteN < 0.01 || vCostPerMinuteN > 0.5) throw new Error("This cost is unrealistic!");
+        if(vCostPerMinute < 0.01 || vCostPerMinute > 0.5) throw new Error("This cost is unrealistic!");
         
         //Usage only for E-Vehicles
         if(["E-Bike", "E-Scooter"].includes(vType)){
             console.log("Enter the vehicle's usage per km in %");
-            evUsage = await reader.question(":");
+            evUsageS = await reader.question(":");
+            evUsage = Number(evUsageS);
             if(Number.isNaN(evUsage)) throw new Error("The entered usage is not a number!");
-            evUsageN = Number(evUsage);
-            if(evUsageN < 0.5 || evUsageN > 5) throw new Error("The entered usage is unrealistic!");
+            if(evUsage < 0.5 || evUsage > 5) throw new Error("The entered usage is unrealistic!");
         }
         
     }catch(err){
@@ -151,10 +151,10 @@ async function addVehicle(testData: TestData, reader: readline.Interface): Promi
     }
     //Instantiating new vehicle and adding to test data
     if(["E-Bike", "E-Scooter"].includes(vType)){
-        const newEVehicle = new Evehicle(vType, vName, vCostPerMinuteN, evUsageN);
+        const newEVehicle = new Evehicle(vType, vName, vCostPerMinute, evUsage);
         testData.addVehicle(vType, newEVehicle);
     }else{
-        const newVehicle = new VehicleObj(vType, vName, vCostPerMinuteN);
+        const newVehicle = new VehicleObj(vType, vName, vCostPerMinute);
         testData.addVehicle(vType, newVehicle);
     }
     return createDataArray(testData);
@@ -165,11 +165,12 @@ async function returnVehicle(data: VehicleObj[], reader: readline.Interface){
     
     try{
         const vNumberS: string = await reader.question(":");
-        if(!Number.isInteger(vNumberS)) throw new Error("The vhehicle number must be a whole number!");
         const vNumber: number = Number(vNumberS);
+        if(Number.isNaN(vNumber)) throw new Error("Vehicle numebr must be a number!");
+        if(!Number.isInteger(vNumber)) throw new Error("The vhehicle number must be a whole number!");
         if(vNumber < 0 || vNumber > data.length - 1) throw new Error("The entered number is outside of the range of valid indeces!");
         data[vNumber]?.returnVehicle();
-        console.log(`${data[vNumber]?.getName} has been returned.`);
+        console.log(`${data[vNumber]?.getName()} has been returned.`);
     }catch(err){
         console.log("Error returning vehicle: " + err);
     }
@@ -180,15 +181,16 @@ async function chargeVehicle(data: VehicleObj[], reader: readline.Interface) {
     try{
         //Vehicle number
         const vNumberS: string = await reader.question(":");
-        if(!Number.isInteger(vNumberS)) throw new Error("The vhehicle number must be a whole number!");
         const vNumber: number = Number(vNumberS);
+        if(Number.isNaN(vNumber)) throw new Error("Vehicle numebr must be a number!");
+        if(!Number.isInteger(vNumber)) throw new Error("The vhehicle number must be a whole number!");
         if(vNumber < 0 || vNumber > data.length - 1) throw new Error("The entered number is outside of the range of valid indeces!");
         if(!(data[vNumber] instanceof Evehicle))throw new Error(`The given vehicle at number ${vNumber} is not electric!`);
         //Charge amount
         console.log("Enter the percentage amout by which you would like to charge the vehicle");
         const chargeAmountS = await reader.question(":");
-        if(Number.isNaN(chargeAmountS)) throw new Error("The charge amount must be a number!");
         const chargeAmount = Number(chargeAmountS);
+        if(Number.isNaN(chargeAmount)) throw new Error("The charge amount must be a number!");
         data[vNumber].charge(chargeAmount);
         //console output
         console.log(`Vehicle ${data[vNumber].getName()} has been charged to ${data[vNumber].getCurrentCharge()}%`);
@@ -198,7 +200,24 @@ async function chargeVehicle(data: VehicleObj[], reader: readline.Interface) {
 }
 
 async function driveVehicle(data: VehicleObj[], reader: readline.Interface) {
-    
+    console.log("Enter the number of the vehicle you would like to drive");
+    try{
+        //Vehicle number
+        const vNumberS: string = await reader.question(":");
+        const vNumber: number = Number(vNumberS);
+        if(Number.isNaN(vNumber)) throw new Error("Vehicle numebr must be a number!");
+        if(!(Number.isInteger(vNumber))) throw new Error("The vhehicle number must be a whole number!");
+        if(vNumber < 0 || vNumber > data.length - 1) throw new Error("The entered number is outside of the range of valid indeces!");
+        //if(!(data[vNumber] instanceof Evehicle))throw new Error(`The given vehicle at number ${vNumber} is not electric!`);
+        //driving distance
+        console.log("Enter  the distance you would like to drive in km");
+        const distanceS: string = await reader.question(":");
+        const distance = Number(distanceS);
+        if(Number.isNaN(distance)) throw new Error("The driving distance must be a number!");
+        data[vNumber]?.drive(distance);
+    }catch(err){
+        console.log("Error driving vehicle: " + err);
+    }
 }
 
 function createDataArray(testData: TestData){

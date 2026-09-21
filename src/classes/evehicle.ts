@@ -28,7 +28,7 @@ import vehicleObj from './vehicleObj.js';
                 this.currentCharge += percentage;
             }else{
                 console.log(`You tried overcharging the battery. Charging was abborted at 100%.`);
-                console.log(`Unused charge: ${percentage - (this.currentCharge - 100)}`);
+                console.log(`Unused charge: ${percentage - (100 - this.currentCharge)}`);
                 this.currentCharge = 100;
             }
         }catch(err){
