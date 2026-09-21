@@ -26,14 +26,14 @@ function initialize(){
     myBicycle.return();
     myEbike.return();*/
     const testData = new TestData;
-    var data: VehicleObj[] = createDataArray(testData);
+    let data: VehicleObj[] = createDataArray(testData);
     
     doSmth(data, testData);
 }
 
 async function doSmth(data: VehicleObj[], testData: TestData){
-    var close: string = "";
-    var state: number;
+    let close: string = "";
+    let state: number;
     const reader = readline.createInterface({input, output});
     do{
         console.log("Choose what to do next!");
@@ -60,8 +60,10 @@ async function doSmth(data: VehicleObj[], testData: TestData){
                 printAllVehicles(data, reader);
                 break;
             case "5":
+                await chargeVehicle(data, reader);
                 break;
             case "6":
+                await driveVehicle(data, reader);
                 break;
             default:
                 console.log(`Invalid entry ${state}. Please select one of the given options!`);
@@ -110,12 +112,12 @@ async function rentOut(data: VehicleObj[], reader: readline.Interface){
 
 async function addVehicle(testData: TestData, reader: readline.Interface): Promise<VehicleObj[]> {
     console.log("Adding a new vehicle to the fleet:");
-    var vType: string = "";
-    var vName: string = "";
-    var vCostPerMinute: string = "";
-    var vCostPerMinuteN: number = 0;
-    var evUsage: string = "";
-    var evUsageN: number = 0;
+    let vType: string = "";
+    let vName: string = "";
+    let vCostPerMinute: string = "";
+    let vCostPerMinuteN: number = 0;
+    let evUsage: string = "";
+    let evUsageN: number = 0;
     
     try{
         //Vehicle Type
@@ -162,18 +164,45 @@ async function returnVehicle(data: VehicleObj[], reader: readline.Interface){
     console.log("Enter the number of the returned vehicle");
     
     try{
-        const vehicleNumberS: string = await reader.question(":");
-        if(Number.isInteger(vehicleNumberS)) throw new Error("The vhehicle number must be a whole number!");
-        const vehicleNumber: number = Number(vehicleNumberS);
-        data[vehicleNumber]?.returnVehicle();
-        console.log(`${data[vehicleNumber]?.getName} has been returned.`);
+        const vNumberS: string = await reader.question(":");
+        if(!Number.isInteger(vNumberS)) throw new Error("The vhehicle number must be a whole number!");
+        const vNumber: number = Number(vNumberS);
+        if(vNumber < 0 || vNumber > data.length - 1) throw new Error("The entered number is outside of the range of valid indeces!");
+        data[vNumber]?.returnVehicle();
+        console.log(`${data[vNumber]?.getName} has been returned.`);
     }catch(err){
         console.log("Error returning vehicle: " + err);
     }
 }
 
+async function chargeVehicle(data: VehicleObj[], reader: readline.Interface) {
+    console.log("Enter the number of the vehicle you would like to charge");
+    try{
+        //Vehicle number
+        const vNumberS: string = await reader.question(":");
+        if(!Number.isInteger(vNumberS)) throw new Error("The vhehicle number must be a whole number!");
+        const vNumber: number = Number(vNumberS);
+        if(vNumber < 0 || vNumber > data.length - 1) throw new Error("The entered number is outside of the range of valid indeces!");
+        if(!(data[vNumber] instanceof Evehicle))throw new Error(`The given vehicle at number ${vNumber} is not electric!`);
+        //Charge amount
+        console.log("Enter the percentage amout by which you would like to charge the vehicle");
+        const chargeAmountS = await reader.question(":");
+        if(Number.isNaN(chargeAmountS)) throw new Error("The charge amount must be a number!");
+        const chargeAmount = Number(chargeAmountS);
+        data[vNumber].charge(chargeAmount);
+        //console output
+        console.log(`Vehicle ${data[vNumber].getName()} has been charged to ${data[vNumber].getCurrentCharge()}%`);
+    }catch(err){
+        console.log("Error charging vehicle: " + err);
+    }
+}
+
+async function driveVehicle(data: VehicleObj[], reader: readline.Interface) {
+    
+}
+
 function createDataArray(testData: TestData){
-    var data: VehicleObj[] = [];
+    let data: VehicleObj[] = [];
     testData.getBikes().forEach(element => {
         data.push(element);
     });

@@ -27,7 +27,7 @@ import vehicleObj from './vehicleObj.js';
             if(percentage + this.currentCharge <= 100){
                 this.currentCharge += percentage;
             }else{
-                console.log(`You tried overcharging the battery. Charging was abborted at ${this.currentCharge}%.`);
+                console.log(`You tried overcharging the battery. Charging was abborted at 100%.`);
                 console.log(`Unused charge: ${percentage - (this.currentCharge - 100)}`);
                 this.currentCharge = 100;
             }
@@ -37,7 +37,7 @@ import vehicleObj from './vehicleObj.js';
     }
 
     public override printStatus(): void {
-        var rentedSymbol: string;
+        let rentedSymbol: string;
         if(this.isRented || this.currentCharge < 50) rentedSymbol = 'x';
         else rentedSymbol = 'o';
         console.log(

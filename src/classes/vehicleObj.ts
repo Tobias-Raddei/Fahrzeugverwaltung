@@ -32,7 +32,7 @@ class VehicleObj implements Vehicle {
     }
 
     public printStatus(): void{
-        var rentedSymbol: string;
+        let rentedSymbol: string;
         if(this.isRented) rentedSymbol = 'x';
         else rentedSymbol = 'o';
         console.log(
