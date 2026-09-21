@@ -1,77 +1,74 @@
 import Evehicle from "./classes/evehicle.js";
-import VehicleObj from "./classes/vehicleObj.js";
+import Vehicle from "./classes/vehicle.js";
 
 class TestData{
-    protected bikes: VehicleObj[] = [];
-    protected eBikes: VehicleObj[] = [];
-    protected eScooters: VehicleObj[] = [];
+    protected bikes: Vehicle[] = [];
+    protected eBikes: Evehicle[] = [];
+    protected eScooters: Evehicle[] = [];
 
     public constructor(){
-        this.bikes.push(new VehicleObj("Bicycle", "MegaBike 900", 0.05));
-        this.bikes.push(new VehicleObj("Bicycle", "UltraBike 2k15", 0.05));
-        this.bikes.push(new VehicleObj("Bicycle", "Super Sonic Racer", 0.05));
-        this.bikes.push(new VehicleObj("Bicycle", "Nut Cracker", 0.05));
-        this.bikes.push(new VehicleObj("Bicycle", "Inspire 5", 0.05));
+        this.bikes.push(
+            new Vehicle("Bicycle", "MegaBike 900", 0.05),
+            new Vehicle("Bicycle", "UltraBike 2k15", 0.05),
+            new Vehicle("Bicycle", "Super Sonic Racer", 0.05),
+            new Vehicle("Bicycle", "Nut Cracker", 0.05),
+            new Vehicle("Bicycle", "Inspire 5", 0.05)
+        );
 
-        this.eBikes.push(new Evehicle("E-Bike", "MegaBike 900e", 0.1, 2));
-        this.eBikes.push(new Evehicle("E-Bike", "Fast Blazer 5", 0.1, 2));
-        this.eBikes.push(new Evehicle("E-Bike", "Trail Ripper 9", 0.1, 2));
-        this.eBikes.push(new Evehicle("E-Bike", "Tesla Coil Super", 0.1, 2));
-        this.eBikes.push(new Evehicle("E-Bike", "Infinity and Beyond", 0.1, 2));
+        this.eBikes.push(
+            new Evehicle("E-Bike", "MegaBike 900e", 0.1, 2),
+            new Evehicle("E-Bike", "Fast Blazer 5", 0.1, 2),
+            new Evehicle("E-Bike", "Trail Ripper 9", 0.1, 2),
+            new Evehicle("E-Bike", "Tesla Coil Super", 0.1, 2),
+            new Evehicle("E-Bike", "Infinity and Beyond", 0.1, 2)
+        );
 
-        this.eScooters.push(new Evehicle("E-Scooter", "ToyTransport X", 0.07, 2));
-        this.eScooters.push(new Evehicle("E-Scooter", "TechTrash Elite", 0.07, 2));
-        this.eScooters.push(new Evehicle("E-Scooter", "The Urban Obstacle Prime", 0.07, 2));
-        this.eScooters.push(new Evehicle("E-Scooter", "ScrapStreamer Eco", 0.07, 2));
-        this.eScooters.push(new Evehicle("E-Scooter", "MayhemMatrix Quantum", 0.07, 2));
+        this.eScooters.push(
+            new Evehicle("E-Scooter", "ToyTransport X", 0.07, 2),
+            new Evehicle("E-Scooter", "TechTrash Elite", 0.07, 2),
+            new Evehicle("E-Scooter", "The Urban Obstacle Prime", 0.07, 2),
+            new Evehicle("E-Scooter", "ScrapStreamer Eco", 0.07, 2),
+            new Evehicle("E-Scooter", "MayhemMatrix Quantum", 0.07, 2)
+        );
     }
 
-    public getBikes(): VehicleObj[]{
+    public getBikes(): Vehicle[]{
         return this.bikes;
     }
 
-    public getEbikes(): VehicleObj[]{
+    public getEbikes(): Evehicle[]{
         return this.eBikes;
     }
 
-    public getScooters(): VehicleObj[]{
+    public getScooters(): Evehicle[]{
         return this.eScooters;
     }
 
-    public addVehicle(type: string, vehicle: VehicleObj | Evehicle): void{
+    public addVehicle(type: string, vehicle: Vehicle | Evehicle): void{
         switch(type){
             case "Bicycle":
-                try{
-                    //console.log("vehicle type: " + typeof(vehicle));
-                    //console.log("VehicleObj type: " + typeof(VehicleObj));
-                    if(!(vehicle instanceof VehicleObj)) throw new Error("Wrong Object type for given type string, or incompadible object type!");
-                    this.bikes.push(vehicle);
-                }catch(err){
-                    console.log(`Error inserting Bicycle into test data: ${err}`);
+                if (vehicle instanceof Evehicle || !(vehicle instanceof Vehicle)) {
+                    console.error("Error inserting Bicycle: Wrong Object type or incompatible object type!");
+                    return;
                 }
+                this.bikes.push(vehicle);
                 break;
             case "E-Bike":
-                try{
-                    if(!(vehicle instanceof VehicleObj)) throw new Error("Wrong Object type for given type string!");
-                    this.eBikes.push(vehicle);
-                }catch(err){
-                    console.log(`Error inserting E-Bike into test data: ${err}`);
+                if (!(vehicle instanceof Evehicle)) {
+                    console.error("Error inserting E-Bike: Object must be an instance of Evehicle!");
+                    return;
                 }
+                this.eBikes.push(vehicle);
                 break;
             case "E-Scooter":
-                try{
-                    if(!(vehicle instanceof VehicleObj)) throw new Error("Wrong Object type for given type string!");
-                    this.eScooters.push(vehicle);
-                }catch(err){
-                    console.log(`Error inserting E-Scooter into test data: ${err}`);
+                if (!(vehicle instanceof Evehicle)) {
+                    console.error("Error inserting E-Scooter: Object must be an instance of Evehicle!");
+                    return;
                 }
+                this.eScooters.push(vehicle);
                 break;
             default:
-                try{
-                    throw new Error("Wrong type string for Vehicle insertion into test data!");
-                }catch(err){
-                    console.log(`Error inserting Vehicle into test data: ${err}`);
-                }
+                console.error(`Error inserting Vehicle: Unknown type string "${type}"!`);
         }
     }
 }
