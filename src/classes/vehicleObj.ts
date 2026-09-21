@@ -38,7 +38,8 @@ class VehicleObj implements Vehicle {
         console.log(
             `${this.type.padEnd(16)}`+
             `${this.name.padEnd(30)}`+
-            `${rentedSymbol.padEnd(10)}`
+            `${rentedSymbol.padEnd(8)}`+
+            `${this.costPerMinute}`.padEnd(20)
         );
     }
 

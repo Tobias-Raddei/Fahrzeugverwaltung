@@ -38,12 +38,13 @@ import vehicleObj from './vehicleObj.js';
 
     public override printStatus(): void {
         var rentedSymbol: string;
-        if(this.isRented && this.currentCharge < 50) rentedSymbol = 'x';
+        if(this.isRented || this.currentCharge < 50) rentedSymbol = 'x';
         else rentedSymbol = 'o';
         console.log(
             `${this.type.padEnd(16)}`+
             `${this.name.padEnd(30)}`+
-            `${rentedSymbol.padEnd(10)}`+
+            `${rentedSymbol.padEnd(8)}`+
+            `${this.costPerMinute}`.padEnd(20)+
             `${String(this.currentCharge)}`
         );
     }

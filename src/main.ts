@@ -42,6 +42,7 @@ async function doSmth(data: VehicleObj[], testData: TestData){
         console.log("3: Return a previously rented out vehicle");
         console.log("4: Show the status of all vehicles in your fleet");
         console.log("5: Charge one of your electric vehicles");
+        console.log("6: Drive one of the rented out vehicles");
         //console.log("Choose what to do next!");
         
         const state = await reader.question("");
@@ -53,11 +54,14 @@ async function doSmth(data: VehicleObj[], testData: TestData){
                 data = await addVehicle(testData, reader);
                 break;
             case "3":
+                await returnVehicle(data, reader);
                 break;
             case "4":
                 printAllVehicles(data, reader);
                 break;
             case "5":
+                break;
+            case "6":
                 break;
             default:
                 console.log(`Invalid entry ${state}. Please select one of the given options!`);
@@ -75,9 +79,10 @@ function printAllVehicles(data: VehicleObj[], reader: readline.Interface){
         "Type".padEnd(16)+
         "Name".padEnd(24)+
         "is available".padEnd(16)+
+        "cost per minute".padEnd(20)+
         "currentCharge");
     for(let i = 0; i < data.length; i++){
-        process.stdout.write(String(i) + "\t");
+        process.stdout.write(String(i).padEnd(10));
         data[i]?.printStatus();
     }
 }
@@ -96,7 +101,8 @@ async function rentOut(data: VehicleObj[], reader: readline.Interface){
         const rentDurationString = await reader.question(":");
         const rentDuration: number = Number(rentDurationString);
         if(isNaN(rentDuration)) throw new Error("Not a valid number!");
-        data[vNumber]?.rent(rentDuration);
+        const rentPrice = data[vNumber]?.rent(rentDuration);
+        console.log(`${data[vNumber]?.getName()} was rented out for ${rentDuration} minutes for a cost of ${rentPrice}`);
     }catch(err){
         console.log(`Error renting out vehicle: ${err}`);
     }
@@ -150,6 +156,20 @@ async function addVehicle(testData: TestData, reader: readline.Interface): Promi
         testData.addVehicle(vType, newVehicle);
     }
     return createDataArray(testData);
+}
+
+async function returnVehicle(data: VehicleObj[], reader: readline.Interface){
+    console.log("Enter the number of the returned vehicle");
+    
+    try{
+        const vehicleNumberS: string = await reader.question(":");
+        if(Number.isInteger(vehicleNumberS)) throw new Error("The vhehicle number must be a whole number!");
+        const vehicleNumber: number = Number(vehicleNumberS);
+        data[vehicleNumber]?.returnVehicle();
+        console.log(`${data[vehicleNumber]?.getName} has been returned.`);
+    }catch(err){
+        console.log("Error returning vehicle: " + err);
+    }
 }
 
 function createDataArray(testData: TestData){
