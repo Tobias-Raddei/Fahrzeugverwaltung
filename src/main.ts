@@ -26,21 +26,12 @@ function initialize(){
     myBicycle.return();
     myEbike.return();*/
     const testData = new TestData;
-    var data: VehicleObj[] = [];
-    testData.getBikes().forEach(element => {
-        data.push(element);
-    });
-    testData.getEbikes().forEach(element => {
-        data.push(element);
-    });
-    testData.getScooters().forEach(element => {
-        data.push(element);
-    });
+    var data: VehicleObj[] = createDataArray(testData);
     
-    doSmth(data);
+    doSmth(data, testData);
 }
 
-async function doSmth(data: VehicleObj[]){
+async function doSmth(data: VehicleObj[], testData: TestData){
     var close: string = "";
     var state: number;
     const reader = readline.createInterface({input, output});
@@ -59,11 +50,12 @@ async function doSmth(data: VehicleObj[]){
                 await rentOut(data, reader);
                 break;
             case "2":
+                data = await addVehicle(testData, reader);
                 break;
             case "3":
                 break;
             case "4":
-                await printAllVehicles(data, reader);
+                printAllVehicles(data, reader);
                 break;
             case "5":
                 break;
@@ -77,7 +69,7 @@ async function doSmth(data: VehicleObj[]){
     reader.close();
 }
 
-async function printAllVehicles(data: VehicleObj[], reader: readline.Interface){
+function printAllVehicles(data: VehicleObj[], reader: readline.Interface){
     console.log(
         "Number".padEnd(8)+
         "Type".padEnd(16)+
@@ -88,8 +80,6 @@ async function printAllVehicles(data: VehicleObj[], reader: readline.Interface){
         process.stdout.write(String(i) + "\t");
         data[i]?.printStatus();
     }
-    console.log("Press enter to continue.");
-    await reader.question(":");
 }
 
 async function rentOut(data: VehicleObj[], reader: readline.Interface){
@@ -110,6 +100,70 @@ async function rentOut(data: VehicleObj[], reader: readline.Interface){
     }catch(err){
         console.log(`Error renting out vehicle: ${err}`);
     }
+}
+
+async function addVehicle(testData: TestData, reader: readline.Interface): Promise<VehicleObj[]> {
+    console.log("Adding a new vehicle to the fleet:");
+    var vType: string = "";
+    var vName: string = "";
+    var vCostPerMinute: string = "";
+    var vCostPerMinuteN: number = 0;
+    var evUsage: string = "";
+    var evUsageN: number = 0;
+    
+    try{
+        //Vehicle Type
+        console.log("Enter type of new vehicle");
+        console.log("Type must be either Bicycle, E-Bike or E-Scooter");
+        vType = await reader.question(":");
+        if(!["Bicycle", "E-Bike", "E-Scooter"].includes(vType)) throw new Error(`${vType} is not a valid vehicle type!`);
+        
+        //Vehicle Name
+        console.log("Enter the name of the new vehicle");
+        vName = await reader.question(":");
+        
+        //Vehicle's cost per minnute
+        console.log("Enter the vehicle's cost per minute");
+        vCostPerMinute = await reader.question(":");
+        if(Number.isNaN(vCostPerMinute)) throw new Error("The entered cost is not a number!");
+        vCostPerMinuteN = Number(vCostPerMinute);
+        if(vCostPerMinuteN < 0.01 || vCostPerMinuteN > 0.5) throw new Error("This cost is unrealistic!");
+        
+        //Usage only for E-Vehicles
+        if(["E-Bike", "E-Scooter"].includes(vType)){
+            console.log("Enter the vehicle's usage per km in %");
+            evUsage = await reader.question(":");
+            if(Number.isNaN(evUsage)) throw new Error("The entered usage is not a number!");
+            evUsageN = Number(evUsage);
+            if(evUsageN < 0.5 || evUsageN > 5) throw new Error("The entered usage is unrealistic!");
+        }
+        
+    }catch(err){
+        console.log("Error adding new vehicle to fleet: " + err);
+    }
+    //Instantiating new vehicle and adding to test data
+    if(["E-Bike", "E-Scooter"].includes(vType)){
+        const newEVehicle = new Evehicle(vType, vName, vCostPerMinuteN, evUsageN);
+        testData.addVehicle(vType, newEVehicle);
+    }else{
+        const newVehicle = new VehicleObj(vType, vName, vCostPerMinuteN);
+        testData.addVehicle(vType, newVehicle);
+    }
+    return createDataArray(testData);
+}
+
+function createDataArray(testData: TestData){
+    var data: VehicleObj[] = [];
+    testData.getBikes().forEach(element => {
+        data.push(element);
+    });
+    testData.getEbikes().forEach(element => {
+        data.push(element);
+    });
+    testData.getScooters().forEach(element => {
+        data.push(element);
+    });
+    return data;
 }
 
 initialize();

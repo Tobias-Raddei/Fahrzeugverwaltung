@@ -40,28 +40,30 @@ class TestData{
 
     public addVehicle(type: string, vehicle: VehicleObj | Evehicle): void{
         switch(type){
-            case "bike":
+            case "Bicycle":
                 try{
-                    if(typeof(vehicle) != typeof(VehicleObj)) throw new Error("Wrong Object type for given type string!");
+                    //console.log("vehicle type: " + typeof(vehicle));
+                    //console.log("VehicleObj type: " + typeof(VehicleObj));
+                    if(!(vehicle instanceof VehicleObj)) throw new Error("Wrong Object type for given type string, or incompadible object type!");
                     this.bikes.push(vehicle);
                 }catch(err){
-                    console.log(`Error inserting Vehicle into test data: ${err}`);
+                    console.log(`Error inserting Bicycle into test data: ${err}`);
                 }
                 break;
-            case "ebike":
+            case "E-Bike":
                 try{
-                    if(typeof(vehicle) != typeof(VehicleObj)) throw new Error("Wrong Object type for given type string!");
+                    if(!(vehicle instanceof VehicleObj)) throw new Error("Wrong Object type for given type string!");
                     this.eBikes.push(vehicle);
                 }catch(err){
-                    console.log(`Error inserting Vehicle into test data: ${err}`);
+                    console.log(`Error inserting E-Bike into test data: ${err}`);
                 }
                 break;
-            case "escooter":
+            case "E-Scooter":
                 try{
-                    if(typeof(vehicle) != typeof(VehicleObj)) throw new Error("Wrong Object type for given type string!");
+                    if(!(vehicle instanceof VehicleObj)) throw new Error("Wrong Object type for given type string!");
                     this.eScooters.push(vehicle);
                 }catch(err){
-                    console.log(`Error inserting Vehicle into test data: ${err}`);
+                    console.log(`Error inserting E-Scooter into test data: ${err}`);
                 }
                 break;
             default:
